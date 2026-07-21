@@ -90,6 +90,20 @@
             letter-spacing: 1px;
             margin-top: 4px;
             font-family: monospace;
+            background: rgba(255,255,255,0.03);
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .card .number .copy-hint {
+            color: rgba(255,255,255,0.1);
+            font-size: 12px;
+            background: rgba(255,255,255,0.04);
+            padding: 4px 10px;
+            border-radius: 20px;
         }
         .amount-section {
             margin-bottom: 24px;
@@ -147,13 +161,16 @@
             border-color: rgba(124,58,237,0.3);
             color: #a78bfa;
         }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         .btn {
             width: 100%;
             padding: 18px;
             border: none;
             border-radius: 60px;
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            color: white;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
@@ -165,6 +182,19 @@
         }
         .btn:active {
             transform: scale(0.97);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #21a038, #1a8a2e);
+            color: white;
+            box-shadow: 0 4px 20px rgba(33, 160, 56, 0.2);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #c0c0e0;
+        }
+        .btn-secondary:active {
+            background: rgba(255,255,255,0.08);
         }
         .btn:disabled {
             opacity: 0.4;
@@ -178,11 +208,39 @@
         }
         .status.success { color: #6ee7b7; }
         .status.error { color: #f87171; }
+        .status.info { color: #60a5fa; }
         .footer {
             margin-top: 20px;
             text-align: center;
             color: rgba(255,255,255,0.06);
             font-size: 11px;
+        }
+        .steps {
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .steps .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
+        }
+        .steps .step .num {
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.2);
         }
     </style>
 </head>
@@ -199,7 +257,10 @@
             <span class="name">СберБанк</span>
         </div>
         <div class="recipient">Эсли</div>
-        <div class="number">4081 7810 5603 2434 6396</div>
+        <div class="number" id="cardNumber">
+            4081 7810 5603 2434 6396
+            <span class="copy-hint">нажмите чтобы скопировать</span>
+        </div>
     </div>
 
     <div class="amount-section">
@@ -216,7 +277,17 @@
         </div>
     </div>
 
-    <button class="btn" id="sendBtn">Перевести</button>
+    <div class="steps">
+        <div class="step"><span class="num">1</span> Скопируйте номер карты</div>
+        <div class="step"><span class="num">2</span> Нажмите кнопку для перехода в Сбер</div>
+        <div class="step"><span class="num">3</span> Вставьте номер карты и сумму</div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-primary" id="openBankBtn">🏦 Перейти в СберБанк Онлайн</button>
+        <button class="btn btn-secondary" id="copyBtn">📋 Скопировать номер карты</button>
+    </div>
+
     <div class="status" id="status"></div>
     <div class="footer">UNI Agency • Защищено Telegram</div>
 </div>
@@ -226,8 +297,98 @@
     tg.ready();
 
     const amountInput = document.getElementById('amount');
-    const sendBtn = document.getElementById('sendBtn');
+    const openBankBtn = document.getElementById('openBankBtn');
+    const copyBtn = document.getElementById('copyBtn');
     const status = document.getElementById('status');
+    const cardNumber = document.getElementById('cardNumber');
+
+    const CARD = "40817810560324346396";
+    const CARD_DISPLAY = "4081 7810 5603 2434 6396";
+
+    // Копирование карты
+    function copyCard() {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(CARD).then(() => {
+                status.textContent = '✅ Номер карты скопирован!';
+                status.className = 'status success';
+            }).catch(() => fallbackCopy());
+        } else {
+            fallbackCopy();
+        }
+    }
+
+    function fallbackCopy() {
+        const textArea = document.createElement('textarea');
+        textArea.value = CARD;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            status.textContent = '✅ Номер карты скопирован!';
+            status.className = 'status success';
+        } catch (err) {
+            status.textContent = '❌ Скопируйте вручную: ' + CARD;
+            status.className = 'status error';
+        }
+        document.body.removeChild(textArea);
+    }
+
+    // Клик по карте = копирование
+    cardNumber.addEventListener('click', copyCard);
+
+    // Главная кнопка: копирует карту и открывает Сбер
+    openBankBtn.addEventListener('click', function() {
+        const sum = parseInt(amountInput.value);
+        if (!sum || sum < 1) {
+            status.textContent = '❌ Введите сумму';
+            status.className = 'status error';
+            return;
+        }
+
+        copyCard();
+
+        // Отправляем уведомление админу
+        tg.sendData(JSON.stringify({
+            action: 'pay_done',
+            sum: sum,
+            type: 'prepay',
+            user_id: tg.initDataUnsafe?.user?.id || 0,
+            username: tg.initDataUnsafe?.user?.username || ''
+        }));
+
+        status.textContent = '⏳ Открываем СберБанк Онлайн...';
+        status.className = 'status info';
+
+        // Пытаемся открыть приложение по URL-схеме
+        const appUrl = 'sberbankonline://';
+        const webUrl = 'https://online.sberbank.ru/';
+
+        // Сначала пробуем открыть приложение
+        const start = Date.now();
+        const win = window.open(appUrl, '_blank');
+
+        // Через 0.8 секунды проверяем, открылось ли приложение
+        setTimeout(() => {
+            if (Date.now() - start < 1200) {
+                // Если приложение не открылось — переходим на сайт
+                window.open(webUrl, '_blank');
+                status.textContent = '📱 Приложение не найдено, открываем сайт';
+                status.className = 'status info';
+            } else {
+                status.textContent = '✅ Открываем приложение Сбера';
+                status.className = 'status success';
+            }
+        }, 800);
+
+        setTimeout(() => {
+            status.textContent = '✅ Карта скопирована! Вставьте номер карты и сумму в приложении.';
+            status.className = 'status success';
+            setTimeout(() => tg.close(), 2500);
+        }, 2500);
+    });
+
+    // Кнопка только копировать
+    copyBtn.addEventListener('click', copyCard);
 
     // Пресеты
     document.querySelectorAll('.chip').forEach(chip => {
@@ -237,36 +398,8 @@
         });
     });
 
-    sendBtn.addEventListener('click', () => {
-        const sum = parseInt(amountInput.value);
-        if (!sum || sum < 1) {
-            status.textContent = '❌ Введите корректную сумму';
-            status.className = 'status error';
-            return;
-        }
-
-        sendBtn.disabled = true;
-        status.textContent = '⏳ Отправка...';
-        status.className = 'status';
-
-        // Отправка в бот
-        tg.sendData(JSON.stringify({
-            action: 'pay_done',
-            sum: sum,
-            type: 'prepay',
-            user_id: tg.initDataUnsafe?.user?.id || 0,
-            username: tg.initDataUnsafe?.user?.username || ''
-        }));
-
-        setTimeout(() => {
-            status.textContent = '✅ Платёж отправлен на подтверждение';
-            status.className = 'status success';
-            setTimeout(() => tg.close(), 1200);
-        }, 800);
-    });
-
     amountInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') sendBtn.click();
+        if (e.key === 'Enter') openBankBtn.click();
     });
 </script>
 </body>
