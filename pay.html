@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNI Agency | Оплата</title>
+    <title>UNI Pay</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,310 +15,373 @@
             box-sizing: border-box;
         }
         body {
+            background: #0A0A12;
             min-height: 100vh;
-            background: radial-gradient(circle at 20% 30%, #0a0a1a, #03030a);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
-            padding: 20px;
+            justify-content: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 16px;
         }
-        .glass {
-            background: rgba(20, 20, 40, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(127, 90, 240, 0.25);
-            border-radius: 48px;
-            padding: 40px 32px;
-            max-width: 420px;
+        .app {
+            max-width: 400px;
             width: 100%;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 80px rgba(127, 90, 240, 0.08);
-            transition: transform 0.3s ease;
+            background: #12121F;
+            border-radius: 40px;
+            padding: 28px 20px 30px;
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
         }
-        .glass:hover {
-            transform: scale(1.005);
-        }
-        .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #a78bfa, #7c3aed, #4f46e5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 6px;
-            text-shadow: 0 0 40px rgba(127, 90, 240, 0.2);
-        }
-        .subtitle {
-            text-align: center;
-            color: rgba(255,255,255,0.4);
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 24px;
         }
-        .client-box {
-            background: rgba(255,255,255,0.03);
-            border-radius: 24px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .client-box .label {
-            color: rgba(255,255,255,0.3);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .client-box .name {
-            color: #f0f0ff;
-            font-size: 18px;
-            font-weight: 500;
-            margin-top: 4px;
-        }
-        .amount-box {
-            text-align: center;
-            margin: 20px 0 24px;
-        }
-        .amount-box .currency {
-            color: rgba(255,255,255,0.3);
-            font-size: 16px;
-            font-weight: 400;
-        }
-        .amount-box .sum {
-            font-size: 56px;
+        .header .logo {
+            font-size: 22px;
             font-weight: 700;
-            color: #a78bfa;
-            text-shadow: 0 0 60px rgba(127, 90, 240, 0.3);
-            letter-spacing: -1px;
-            line-height: 1.1;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
-        .details {
-            background: rgba(255,255,255,0.02);
-            border-radius: 24px;
-            padding: 18px 20px;
-            margin-bottom: 28px;
+        .header .secure {
+            color: rgba(255,255,255,0.2);
+            font-size: 12px;
+            background: rgba(255,255,255,0.04);
+            padding: 6px 14px;
+            border-radius: 40px;
             border: 1px solid rgba(255,255,255,0.04);
         }
-        .details .row {
+
+        /* Card */
+        .card {
+            background: linear-gradient(145deg, #1e1e36, #14142a);
+            border-radius: 28px;
+            padding: 24px 20px 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: inset 0 0 40px rgba(127,90,240,0.03);
+            margin-bottom: 28px;
+        }
+        .card .bank {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .details .row:last-child {
-            border-bottom: none;
-        }
-        .details .row .label {
-            color: rgba(255,255,255,0.35);
+        .card .bank-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #21a038, #1a8a2e);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
             font-size: 14px;
         }
-        .details .row .value {
-            color: #f0f0ff;
-            font-weight: 500;
+        .card .bank-name {
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
-            text-align: right;
-            max-width: 60%;
-            word-break: break-word;
         }
-        .btn-group {
+        .card .recipient {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 2px;
         }
-        .btn {
+        .card .recipient .label {
+            color: rgba(255,255,255,0.25);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card .recipient .name {
+            color: #f0f0ff;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .card .recipient .card-number {
+            color: rgba(255,255,255,0.3);
+            font-size: 14px;
+            font-variant: tabular-nums;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            font-family: 'Inter', monospace;
+        }
+
+        /* Amount input */
+        .amount-section {
+            margin-bottom: 28px;
+        }
+        .amount-section .label {
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .amount-section .input-wrap {
+            position: relative;
+        }
+        .amount-section .input-wrap .currency {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.2);
+            font-weight: 500;
+            font-size: 18px;
+        }
+        .amount-section .input-wrap input {
+            width: 100%;
+            padding: 16px 20px 16px 44px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            outline: none;
+            transition: border 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .amount-section .input-wrap input:focus {
+            border-color: #7c3aed;
+        }
+        .amount-section .input-wrap input::placeholder {
+            color: rgba(255,255,255,0.1);
+            font-weight: 400;
+        }
+
+        /* Preset amounts */
+        .presets {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .presets .chip {
+            flex: 1;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 40px;
+            padding: 10px 0;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .presets .chip:active {
+            background: rgba(124,58,237,0.15);
+            border-color: rgba(124,58,237,0.3);
+            color: #a78bfa;
+        }
+
+        /* Button */
+        .btn-send {
+            width: 100%;
+            padding: 18px;
             border: none;
             border-radius: 60px;
-            padding: 18px 20px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
+            gap: 8px;
+            box-shadow: 0 4px 30px rgba(124,58,237,0.2);
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            color: white;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
-        }
-        .btn-primary:active {
-            transform: scale(0.97);
-            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.2);
-        }
-        .btn-primary .glow {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .btn-primary:active .glow {
-            opacity: 1;
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #c0c0e0;
-        }
-        .btn-secondary:active {
-            background: rgba(255,255,255,0.08);
+        .btn-send:active {
             transform: scale(0.97);
         }
-        .btn-success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .btn-send:disabled {
+            opacity: 0.4;
+            transform: scale(1);
+        }
+        .btn-send .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .btn-send.loading .spinner {
+            display: inline-block;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status */
+        .status {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255,255,255,0.2);
+            min-height: 24px;
+        }
+        .status.success {
             color: #6ee7b7;
         }
-        .note {
-            text-align: center;
-            color: rgba(255,255,255,0.2);
-            font-size: 12px;
+        .status.error {
+            color: #f87171;
+        }
+
+        /* Footer */
+        .footer {
             margin-top: 24px;
-            letter-spacing: 0.3px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            color: rgba(255,255,255,0.08);
+            font-size: 11px;
         }
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.3); }
-            70% { box-shadow: 0 0 0 12px rgba(127, 90, 240, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); }
-        }
+
+        /* Animations */
         .fade-in {
-            animation: fadeIn 0.6s ease;
+            animation: fadeIn 0.5s ease;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @media (max-width: 480px) {
-            .glass { padding: 30px 20px; }
-            .amount-box .sum { font-size: 44px; }
+        .card-pulse {
+            animation: cardPulse 3s infinite ease-in-out;
+        }
+        @keyframes cardPulse {
+            0%, 100% { border-color: rgba(255,255,255,0.05); }
+            50% { border-color: rgba(127,90,240,0.1); }
         }
     </style>
 </head>
 <body>
-    <div class="glass fade-in">
-        <div class="logo">UNI Agency</div>
-        <div class="subtitle">платёжная система</div>
-
-        <div class="client-box">
-            <div class="label">Плательщик</div>
-            <div class="name" id="clientName">👤 Загрузка...</div>
-        </div>
-
-        <div class="amount-box">
-            <span class="currency">₽</span>
-            <span class="sum" id="sumDisplay">0</span>
-        </div>
-
-        <div class="details">
-            <div class="row">
-                <span class="label">Услуга</span>
-                <span class="value" id="serviceDesc">Контент-пакет</span>
-            </div>
-            <div class="row">
-                <span class="label">Получатель</span>
-                <span class="value">Эсли</span>
-            </div>
-            <div class="row">
-                <span class="label">Назначение</span>
-                <span class="value" id="purpose">Оплата по договору</span>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn btn-primary pulse" id="payBtn">
-                <span class="glow"></span>
-                ✅ Я оплатил
-            </button>
-            <button class="btn btn-secondary" id="copyBtn">
-                📋 Скопировать реквизиты
-            </button>
-            <button class="btn btn-success" id="supportBtn" style="display:none;">
-                📩 Перейти в поддержку
-            </button>
-        </div>
-
-        <div class="note">Нажав «Я оплатил», вы подтверждаете, что перевели средства</div>
+<div class="app fade-in">
+    <!-- Header -->
+    <div class="header">
+        <span class="logo">UNI Pay</span>
+        <span class="secure">🔒 Secure</span>
     </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
+    <!-- Card -->
+    <div class="card card-pulse">
+        <div class="bank">
+            <div class="bank-icon">СБ</div>
+            <span class="bank-name">СберБанк</span>
+        </div>
+        <div class="recipient">
+            <span class="label">Получатель</span>
+            <span class="name">Эсли</span>
+            <span class="card-number">4081 7810 5603 2434 6396</span>
+        </div>
+    </div>
 
-        // Получаем данные пользователя
-        const initData = tg.initDataUnsafe || {};
-        const user = initData.user || { username: 'Гость', first_name: 'Клиент' };
+    <!-- Amount -->
+    <div class="amount-section">
+        <label class="label">Сумма перевода</label>
+        <div class="input-wrap">
+            <span class="currency">₽</span>
+            <input type="number" id="amountInput" placeholder="0" min="1" step="1" inputmode="decimal">
+        </div>
+        <div class="presets">
+            <div class="chip" data-amount="500">500 ₽</div>
+            <div class="chip" data-amount="1000">1 000 ₽</div>
+            <div class="chip" data-amount="2500">2 500 ₽</div>
+            <div class="chip" data-amount="5000">5 000 ₽</div>
+        </div>
+    </div>
 
-        // Параметры из URL
-        const params = new URLSearchParams(window.location.search);
-        const sum = params.get('sum') || '500';
-        const type = params.get('type') || 'prepay';
-        const desc = params.get('desc') || 'Контент-пакет';
+    <!-- Send button -->
+    <button class="btn-send" id="sendBtn">
+        <span class="spinner"></span>
+        <span id="sendLabel">Перевести</span>
+    </button>
 
-        // Заполняем данные
-        const displayName = user.first_name + (user.username ? ` (@${user.username})` : '');
-        document.getElementById('clientName').textContent = '👤 ' + displayName;
-        document.getElementById('sumDisplay').textContent = sum;
-        document.getElementById('serviceDesc').textContent = desc;
-        document.getElementById('purpose').textContent = 'Оплата: ' + desc;
+    <!-- Status -->
+    <div class="status" id="status"></div>
 
-        // Сохраняем данные для отправки
-        const payData = {
+    <!-- Footer -->
+    <div class="footer">
+        <span>UNI Agency</span>
+        <span>•</span>
+        <span>Защищено Telegram</span>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    const amountInput = document.getElementById('amountInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const status = document.getElementById('status');
+
+    // Пресеты
+    document.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            amountInput.value = this.dataset.amount;
+            amountInput.dispatchEvent(new Event('input'));
+        });
+    });
+
+    // Авто-фокус
+    amountInput.focus();
+
+    // Обработка отправки
+    sendBtn.addEventListener('click', function() {
+        const amount = parseInt(amountInput.value);
+        if (!amount || amount < 1) {
+            status.textContent = '❌ Введите сумму перевода';
+            status.className = 'status error';
+            amountInput.focus();
+            return;
+        }
+
+        // Блокируем кнопку
+        this.classList.add('loading');
+        this.disabled = true;
+        status.textContent = '⏳ Отправка...';
+        status.className = 'status';
+
+        // Отправляем данные в бот
+        tg.sendData(JSON.stringify({
             action: 'pay_done',
-            sum: sum,
-            type: type,
-            user_id: user.id || 0,
-            username: user.username || ''
-        };
+            sum: amount,
+            type: 'prepay',
+            user_id: tg.initDataUnsafe?.user?.id || 0,
+            username: tg.initDataUnsafe?.user?.username || ''
+        }));
 
-        // Кнопка "Я оплатил"
-        document.getElementById('payBtn').addEventListener('click', function() {
-            // Отправляем данные в бот
-            tg.sendData(JSON.stringify(payData));
-            // Показываем фидбек
-            this.textContent = '✅ Отправлено!';
-            this.disabled = true;
-            this.classList.remove('pulse');
-            // Закрываем WebApp через 1.2с
-            setTimeout(() => {
-                tg.close();
-            }, 1200);
-        });
+        // Показываем успех
+        setTimeout(() => {
+            status.textContent = '✅ Платёж отправлен на подтверждение!';
+            status.className = 'status success';
+            sendBtn.classList.remove('loading');
+            sendBtn.disabled = false;
+            // Закрываем через 1.5с
+            setTimeout(() => tg.close(), 1500);
+        }, 800);
+    });
 
-        // Кнопка "Скопировать реквизиты"
-        document.getElementById('copyBtn').addEventListener('click', function() {
-            const text = 'Сбербанк: 40817810560324346396\nПолучатель: Эсли\nНазначение: ' + desc;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    tg.showPopup({
-                        title: 'Готово',
-                        message: 'Реквизиты скопированы в буфер обмена',
-                        buttons: [{type: 'ok'}]
-                    });
-                }).catch(() => {
-                    // fallback
-                    alert('Реквизиты:\n' + text);
-                });
-            } else {
-                alert('Реквизиты:\n' + text);
-            }
-        });
-
-        // Если пользователь закрывает WebApp до оплаты, можно ничего не делать
-        tg.onEvent('mainButtonClicked', function() {
-            // не используется
-        });
-    </script>
+    // Enter
+    amountInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendBtn.click();
+    });
+</script>
 </body>
 </html>
