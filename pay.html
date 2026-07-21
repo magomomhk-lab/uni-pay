@@ -1,1 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNI Agency | Оплата</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0a1a, #03030a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            padding: 20px;
+        }
+        .glass {
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(127, 90, 240, 0.25);
+            border-radius: 48px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 80px rgba(127, 90, 240, 0.08);
+            transition: transform 0.3s ease;
+        }
+        .glass:hover {
+            transform: scale(1.005);
+        }
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed, #4f46e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            text-shadow: 0 0 40px rgba(127, 90, 240, 0.2);
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .client-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .client-box .label {
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .client-box .name {
+            color: #f0f0ff;
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .amount-box {
+            text-align: center;
+            margin: 20px 0 24px;
+        }
+        .amount-box .currency {
+            color: rgba(255,255,255,0.3);
+            font-size: 16px;
+            font-weight: 400;
+        }
+        .amount-box .sum {
+            font-size: 56px;
+            font-weight: 700;
+            color: #a78bfa;
+            text-shadow: 0 0 60px rgba(127, 90, 240, 0.3);
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+        .details {
+            background: rgba(255,255,255,0.02);
+            border-radius: 24px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .details .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .details .row:last-child {
+            border-bottom: none;
+        }
+        .details .row .label {
+            color: rgba(255,255,255,0.35);
+            font-size: 14px;
+        }
+        .details .row .value {
+            color: #f0f0ff;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn {
+            border: none;
+            border-radius: 60px;
+            padding: 18px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.2);
+        }
+        .btn-primary .glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn-primary:active .glow {
+            opacity: 1;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #c0c0e0;
+        }
+        .btn-secondary:active {
+            background: rgba(255,255,255,0.08);
+            transform: scale(0.97);
+        }
+        .btn-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+        .note {
+            text-align: center;
+            color: rgba(255,255,255,0.2);
+            font-size: 12px;
+            margin-top: 24px;
+            letter-spacing: 0.3px;
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.3); }
+            70% { box-shadow: 0 0 0 12px rgba(127, 90, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .glass { padding: 30px 20px; }
+            .amount-box .sum { font-size: 44px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass fade-in">
+        <div class="logo">UNI Agency</div>
+        <div class="subtitle">платёжная система</div>
 
+        <div class="client-box">
+            <div class="label">Плательщик</div>
+            <div class="name" id="clientName">👤 Загрузка...</div>
+        </div>
+
+        <div class="amount-box">
+            <span class="currency">₽</span>
+            <span class="sum" id="sumDisplay">0</span>
+        </div>
+
+        <div class="details">
+            <div class="row">
+                <span class="label">Услуга</span>
+                <span class="value" id="serviceDesc">Контент-пакет</span>
+            </div>
+            <div class="row">
+                <span class="label">Получатель</span>
+                <span class="value">Эсли</span>
+            </div>
+            <div class="row">
+                <span class="label">Назначение</span>
+                <span class="value" id="purpose">Оплата по договору</span>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-primary pulse" id="payBtn">
+                <span class="glow"></span>
+                ✅ Я оплатил
+            </button>
+            <button class="btn btn-secondary" id="copyBtn">
+                📋 Скопировать реквизиты
+            </button>
+            <button class="btn btn-success" id="supportBtn" style="display:none;">
+                📩 Перейти в поддержку
+            </button>
+        </div>
+
+        <div class="note">Нажав «Я оплатил», вы подтверждаете, что перевели средства</div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+
+        // Получаем данные пользователя
+        const initData = tg.initDataUnsafe || {};
+        const user = initData.user || { username: 'Гость', first_name: 'Клиент' };
+
+        // Параметры из URL
+        const params = new URLSearchParams(window.location.search);
+        const sum = params.get('sum') || '500';
+        const type = params.get('type') || 'prepay';
+        const desc = params.get('desc') || 'Контент-пакет';
+
+        // Заполняем данные
+        const displayName = user.first_name + (user.username ? ` (@${user.username})` : '');
+        document.getElementById('clientName').textContent = '👤 ' + displayName;
+        document.getElementById('sumDisplay').textContent = sum;
+        document.getElementById('serviceDesc').textContent = desc;
+        document.getElementById('purpose').textContent = 'Оплата: ' + desc;
+
+        // Сохраняем данные для отправки
+        const payData = {
+            action: 'pay_done',
+            sum: sum,
+            type: type,
+            user_id: user.id || 0,
+            username: user.username || ''
+        };
+
+        // Кнопка "Я оплатил"
+        document.getElementById('payBtn').addEventListener('click', function() {
+            // Отправляем данные в бот
+            tg.sendData(JSON.stringify(payData));
+            // Показываем фидбек
+            this.textContent = '✅ Отправлено!';
+            this.disabled = true;
+            this.classList.remove('pulse');
+            // Закрываем WebApp через 1.2с
+            setTimeout(() => {
+                tg.close();
+            }, 1200);
+        });
+
+        // Кнопка "Скопировать реквизиты"
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const text = 'Сбербанк: 40817810560324346396\nПолучатель: Эсли\nНазначение: ' + desc;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    tg.showPopup({
+                        title: 'Готово',
+                        message: 'Реквизиты скопированы в буфер обмена',
+                        buttons: [{type: 'ok'}]
+                    });
+                }).catch(() => {
+                    // fallback
+                    alert('Реквизиты:\n' + text);
+                });
+            } else {
+                alert('Реквизиты:\n' + text);
+            }
+        });
+
+        // Если пользователь закрывает WebApp до оплаты, можно ничего не делать
+        tg.onEvent('mainButtonClicked', function() {
+            // не используется
+        });
+    </script>
+</body>
+</html>
